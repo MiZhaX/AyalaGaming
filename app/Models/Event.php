@@ -20,7 +20,7 @@ class Event extends Model
 
     public function schedule()
     {
-        return $this->hasOne(Schedule::class);  // Relación de uno a uno
+        return $this->hasOne(Schedule::class); 
     }
 
     public function registrations()

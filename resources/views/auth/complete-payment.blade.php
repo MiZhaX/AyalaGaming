@@ -59,7 +59,32 @@
                         botonDashboard.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-2', 'mt-2', 'rounded-md', 'hover:bg-blue-600');
                         botonDashboard.innerText = "Finalizar registro";
                         botonDashboard.addEventListener('click', function() {
-                            window.location.href = '/dashboard';
+                            const payment = {
+                                user_id: userId,
+                                quantity: totalCost,
+                                status: "FREE"
+                            };
+
+                            fetch('/api/payments', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify(payment)
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.status == 201) {
+                                        alert("Pago creado correctamente");
+                                        window.location.href = '/dashboard'; // Redirigir al dashboard
+                                    } else {
+                                        alert(data.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error("Error al crear el pago:", error);
+                                    alert("Error en la creación del pago");
+                                });
                         });
 
                         inscripcionesContainer.appendChild(noPagoMensaje);

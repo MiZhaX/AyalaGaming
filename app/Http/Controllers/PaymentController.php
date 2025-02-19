@@ -69,7 +69,7 @@ class PaymentController extends Controller
 
         $user = User::find($request->user_id);
 
-        // Mail::to($user->email)->send(new TicketMail($payment, $user));
+        Mail::to($user->email)->send(new TicketMail($payment, $user));
 
         return response()->json($data, 201);
     }
