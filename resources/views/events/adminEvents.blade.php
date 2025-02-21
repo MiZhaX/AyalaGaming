@@ -309,6 +309,9 @@
                                                 alert('Evento eliminado');
                                                 location.reload(); // Recargar la página para reflejar cambios
                                             }
+                                            else{
+                                                alert(data.message);
+                                            }
                                         });
                                 }
                             });
@@ -354,7 +357,7 @@
                             document.getElementById('editEventModal').classList.add("hidden");
                             location.reload();
                         } else {
-                            alert(datam.message);
+                            alert(data.message);
                         }
                     });
             });

@@ -11,7 +11,7 @@ class RegistrationController extends Controller
 {
     public function index()
     {
-        $registrations = Registration::with(['event.schedule'])->get()->groupBy('user_id');
+        $registrations = Registration::with(['event.schedule', 'user'])->get()->groupBy('user_id');
 
         if ($registrations->isEmpty()) {
             $data = [

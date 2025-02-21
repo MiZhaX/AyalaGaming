@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Event;
@@ -62,7 +63,7 @@ class EventController extends Controller
         ], 200);
     }
 
-    public function store(Request $request)
+    public function store(EventRequest $request)
     {
         // Validación de los datos entrantes
         $validator = $this->validateEvent($request);
@@ -159,6 +160,14 @@ class EventController extends Controller
             ], 404);
         }
 
+        // Verificar si hay asistentes registrados
+        if ($event->inPersonAssistance > 0 || $event->virtualAssistance > 0) {
+            return response()->json([
+                'message' => 'No se puede eliminar el evento porque tiene asistentes registrados.',
+                'status' => 400
+            ], 400);
+        }
+
         // Actualizar el horario del evento en Schedule (poniendo event_id a null)
         if ($event->schedule) {
             $event->schedule->update(['event_id' => null]);
@@ -172,6 +181,7 @@ class EventController extends Controller
             'status' => 200
         ], 200);
     }
+
 
     public function update(Request $request, $id)
     {

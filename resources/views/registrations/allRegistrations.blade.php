@@ -9,7 +9,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            fetch('/api/registrations')
+            fetch('/api/registrations') 
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
@@ -24,22 +24,20 @@
                     Object.entries(data.registrations).forEach(([userId, inscripciones]) => {
                         const userSection = document.createElement("div");
                         userSection.classList.add("border", "p-4", "rounded-lg", "shadow-md", "bg-gray-100");
-
-                        userSection.innerHTML = `
-                            <h2 class="text-lg font-semibold mb-2">Usuario ID: ${userId}</h2>
-                            <div class="space-y-3"></div>
-                        `;
-
-                        const userInscriptionContainer = userSection.querySelector(".space-y-3");
+                        const userInscriptionContainer = document.createElement("div");
+                        userInscriptionContainer.classList.add("space-y-3");
+                        userSection.appendChild(userInscriptionContainer);
 
                         inscripciones.forEach(inscripcion => {
                             const inscripcionDiv = document.createElement("div");
                             inscripcionDiv.classList.add("bg-white", "p-4", "shadow", "rounded-md");
 
+                            console.log(inscripcion);
                             inscripcionDiv.innerHTML = `
                                 <h3 class="text-md font-semibold">${inscripcion.event.name}</h3>
                                 <p class="text-sm text-gray-600">Fecha: ${inscripcion.event.schedule.day} - ${inscripcion.event.schedule.time}</p>
                                 <p class="text-sm text-gray-600">Tipo: ${inscripcion.type === 'inPerson' ? 'Presencial' : 'Virtual'}</p>
+                                <p class="text-sm text-gray-600">Usuario: ${inscripcion.user.name} (Id: ${inscripcion.user_id})</p>
                             `;
 
                             userInscriptionContainer.appendChild(inscripcionDiv);

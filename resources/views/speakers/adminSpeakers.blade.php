@@ -226,6 +226,8 @@
                                             if (data.status == 200) {
                                                 alert('Ponente eliminado');
                                                 location.reload();
+                                            } else {
+                                                alert(data.message);
                                             }
                                         });
                                 }

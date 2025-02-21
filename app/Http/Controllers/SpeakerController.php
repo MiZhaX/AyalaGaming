@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Speaker;
 use App\Services\UploadService;
+use App\Models\Event;
+use App\Http\Requests\SpeakerRequest;
 
 class SpeakerController extends Controller
 {
@@ -29,19 +31,12 @@ class SpeakerController extends Controller
         return response()->json($data, 200);
     }
 
-    public function store(Request $request, UploadService $uploadService)
+    public function store(SpeakerRequest $request, UploadService $uploadService)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'specialization' => 'required',
-            'socialMedia' => 'required',
-        ]);
-
-        if ($validator->fails()) {
+        if (!$request->validated()) {
             $data = [
                 'message' => 'Error en la validación de datos',
-                'errors' => $validator->errors(),
+                'errors' => $request->messages(),
                 'status' => 400
             ];
             return response()->json($data, 400);
@@ -100,24 +95,35 @@ class SpeakerController extends Controller
         $speaker = Speaker::find($id);
 
         if (!$speaker) {
-            $data = [
+            return response()->json([
                 'message' => 'Ponente no encontrado',
                 'status' => 404
-            ];
-            return response()->json($data, 404);
+            ], 404);
         }
 
-        $photoPath = "/speakers/".$speaker->photo;
+        // Verificar si el ponente está asignado a algún evento
+        $isAssigned = Event::where('speaker_id', $id)->exists();
+
+        if ($isAssigned) {
+            return response()->json([
+                'message' => 'No se puede eliminar el ponente porque está asignado a uno o más eventos.',
+                'status' => 400
+            ], 400);
+        }
+
+        // Eliminar la foto del ponente
+        $photoPath = "/speakers/" . $speaker->photo;
         $uploadService::delete($photoPath);
-        
+
+        // Eliminar el ponente
         $speaker->delete();
 
-        $data = [
+        return response()->json([
             'message' => 'Ponente eliminado',
             'status' => 200
-        ];
-        return response()->json($data, 200);
+        ], 200);
     }
+
 
     public function update(Request $request, $id)
     {
