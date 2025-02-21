@@ -32,7 +32,7 @@ class RegistrationController extends Controller
 
     public function store(RegistrationRequest $request)
     {
-        if ($request->validated()) {
+        if (!$request->validated()) {
             return response()->json([
                 'message' => 'Error en la validación de datos',
                 'errors' => $request->messages(),

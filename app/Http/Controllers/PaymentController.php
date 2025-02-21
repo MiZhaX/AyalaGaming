@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Email\TicketMail;
+use App\Http\Requests\PaymentRequest;
 
 class PaymentController extends Controller
 {
@@ -31,18 +32,12 @@ class PaymentController extends Controller
         return response()->json($data, 200);
     }
 
-    public function store(Request $request)
+    public function store(PaymentRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'quantity' => 'required',
-            'status' => 'required'
-        ]);
-
-        if ($validator->fails()) {
+        if (!$request->fails()) {
             $data = [
                 'message' => 'Error en la validación de datos',
-                'errors' => $validator->errors(),
+                'errors' => $request->messages(),
                 'status' => 400
             ];
             return response()->json($data, 400);
