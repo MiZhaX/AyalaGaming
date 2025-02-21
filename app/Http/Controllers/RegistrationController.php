@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegistrationRequest;
 use Illuminate\Http\Request;
 use App\Models\Registration;
 use Illuminate\Support\Facades\Validator;
@@ -29,18 +30,12 @@ class RegistrationController extends Controller
         return response()->json($data, 200);
     }
 
-    public function store(Request $request)
+    public function store(RegistrationRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'event_id' => 'required|exists:events,id',
-            'user_id' => 'required|exists:users,id',
-            'type' => 'required|in:inPerson,virtual'
-        ]);
-
-        if ($validator->fails()) {
+        if ($request->validated()) {
             return response()->json([
                 'message' => 'Error en la validación de datos',
-                'errors' => $validator->errors(),
+                'errors' => $request->messages(),
                 'status' => 400
             ], 400);
         }

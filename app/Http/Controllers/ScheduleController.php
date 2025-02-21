@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ScheduleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Schedule;
@@ -26,19 +27,12 @@ class ScheduleController extends Controller
     }
 
     // Método para crear un horario
-    public function store(Request $request)
+    public function store(ScheduleRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'day' => 'required|in:Thursday,Friday',
-            'time' => 'required|date_format:H:i',
-            'event_id' => 'exists:events,id',
-            'event_type' => 'required|in:Conference,Workshop'
-        ]);
-
-        if ($validator->fails()) {
+        if (!$request->validated()) {
             return response()->json([
                 'message' => 'Error en la validación de datos',
-                'errors' => $validator->errors(),
+                'errors' => $request->messages(),
                 'status' => 400
             ], 400);
         }

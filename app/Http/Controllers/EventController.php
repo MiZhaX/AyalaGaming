@@ -65,13 +65,10 @@ class EventController extends Controller
 
     public function store(EventRequest $request)
     {
-        // Validación de los datos entrantes
-        $validator = $this->validateEvent($request);
-
-        if ($validator->fails()) {
+        if ($request->validated()) {
             return response()->json([
                 'message' => 'Error en la validación de datos',
-                'errors' => $validator->errors(),
+                'errors' => $request->messages(),
                 'status' => 400
             ], 400);
         }
